@@ -13,3 +13,4 @@ person['xxx'] = person['value'] / person['work_year']
 print(person)
 
 print(np.log(b))
+

@@ -9,6 +9,7 @@ pandas = "*"
 matplotlib = "*"
 scikit-learn = "*"
 scipy = "*"
+ipython = "*"
 
 [dev-packages]
 
