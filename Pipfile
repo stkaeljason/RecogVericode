@@ -1,17 +1,13 @@
 [[source]]
-verify_ssl = true
-name = "pypi"
 url = "https://pypi.python.org/simple"
-
-[packages]
-tensorflow = "*"
-pandas = "*"
-matplotlib = "*"
-scikit-learn = "*"
-scipy = "*"
-ipython = "*"
+name = "pypi"
+verify_ssl = true
 
 [dev-packages]
+
+[packages]
+pillow = "*"
+captcha = "*"
 
 [requires]
 python_version = "3.6"
