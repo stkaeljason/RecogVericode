@@ -16,3 +16,6 @@ log
 test.py
 .idea
 test
+
+#tensoflow
+models/*
