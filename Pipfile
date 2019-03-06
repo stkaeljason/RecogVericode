@@ -1,5 +1,5 @@
 [[source]]
-url = "https://pypi.python.org/simple"
+url = "https://mirrors.aliyun.com/pypi/simple"
 name = "pypi"
 verify_ssl = true
 
