@@ -13,11 +13,19 @@ def coll_im(cap_url):
                         'env=%7B%22channel%22%3A3%7D; Hm_lvt_94d2fcdc25bf11213329895f51da83d0=1551841682; '
                         'Hm_lpvt_94d2fcdc25bf11213329895f51da83d0=1551841752'
                }
-    for i in range(10):
-        res = requests.get(cap_url, headers=headers)
-        print(res.content)
-        im_content = res.content
-        with open('./captcha_image/'+str(i)+'.jpg', 'wb') as f:
+
+    def request_im(step):
+        for i in range(step):
+            print(i)
+            try:
+                yield (requests.get(cap_url, headers=headers).content, i)
+            except ConnectionError as e:
+                print(str(e))
+
+
+    for im_pack in request_im(3000):
+        im_content, i = im_pack
+        with open('./captcha_image/'+str(i)+'.png', 'wb') as f:
             f.write(im_content)
 
 
