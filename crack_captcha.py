@@ -1,6 +1,6 @@
 import numpy as np
 
-from generate_captcha import gen_captcha_text_and_image,gen_image
+from generate_captcha import gen_image
 from train import crack_captcha_cnn, MAX_CAPTCHA, CHAR_SET_LEN, keep_prob, X, vec2text, convert2gray
 import tensorflow as tf
 
@@ -36,9 +36,11 @@ def test_crack_captcha(test_step):
         for g_image in gen_image('./captcha_image'):
 
             text_source, image = g_image
+            # print(text_source, image)
             image = convert2gray(image)
             captcha_image = image.flatten() / 255
             text_list = sess.run(predict, feed_dict={X: [captcha_image], keep_prob: 1})
+            # text_list = sess.run(predict, feed_dict={X: np.reshape(captcha_image,(-1,4000)), keep_prob: 1})
             text = text_list[0].tolist()
             vector = np.zeros(MAX_CAPTCHA * CHAR_SET_LEN)
             i = 0

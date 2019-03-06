@@ -17,7 +17,7 @@ def coll_im(cap_url):
         res = requests.get(cap_url, headers=headers)
         print(res.content)
         im_content = res.content
-        with open('./captcha_image/'+str(i)+'.png', 'wb') as f:
+        with open('./captcha_image/'+str(i)+'.jpg', 'wb') as f:
             f.write(im_content)
 
 
