@@ -32,9 +32,10 @@ def test_crack_captcha(test_step):
         saver.restore(sess, tf.train.latest_checkpoint('./models'))
         predict = tf.argmax(tf.reshape(output, [-1, MAX_CAPTCHA, CHAR_SET_LEN]), 2)
         sum_correct = 0
-        for _ in range(test_step):
+        # for _ in range(test_step):
+        for g_image in gen_image('./captcha_image'):
 
-            text_source, image = gen_image('./captcha_image')
+            text_source, image = g_image
             image = convert2gray(image)
             captcha_image = image.flatten() / 255
             text_list = sess.run(predict, feed_dict={X: [captcha_image], keep_prob: 1})
