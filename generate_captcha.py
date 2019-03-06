@@ -34,7 +34,7 @@ def gen_captcha_text_and_image():
 
 
 def gen_image(image_path):
-    for image in os.listdir(image_path)[:1]:
+    for image in os.listdir(image_path):
         captcha_text = image.strip('.png')
         image = os.path.join(image_path, image)
         # print(image)
