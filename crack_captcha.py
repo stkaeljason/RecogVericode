@@ -34,7 +34,7 @@ def test_crack_captcha(test_step):
         sum_correct = 0
         for _ in range(test_step):
 
-            text_source, image = gen_captcha_text_and_image()
+            text_source, image = gen_image('./captcha_image')
             image = convert2gray(image)
             captcha_image = image.flatten() / 255
             text_list = sess.run(predict, feed_dict={X: [captcha_image], keep_prob: 1})
@@ -69,4 +69,4 @@ def test_captcha_model(test_step):
 
 
 if __name__ == "__main__":
-    test_crack_captcha(10000)
+    test_crack_captcha(10)
