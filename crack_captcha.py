@@ -1,8 +1,9 @@
 import numpy as np
 
-from generate_captcha import gen_captcha_text_and_image
+from generate_captcha import gen_captcha_text_and_image,gen_image
 from train import crack_captcha_cnn, MAX_CAPTCHA, CHAR_SET_LEN, keep_prob, X, vec2text, convert2gray
 import tensorflow as tf
+
 
 def crack_captcha(captcha_image):
     output = crack_captcha_cnn()
@@ -52,11 +53,11 @@ def test_crack_captcha(test_step):
         print('成功率：%s' % (sum_correct / test_step))
 
 
-
 def test_captcha_model(test_step):
     sum_correct = 0
     for _ in range(test_step):
-        text, image = gen_captcha_text_and_image()
+        # text, image = gen_captcha_text_and_image()
+        text, image = gen_image('./captcha_image')
         image = convert2gray(image)
         image = image.flatten() / 255
         predict_text = crack_captcha(image)

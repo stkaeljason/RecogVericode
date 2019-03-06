@@ -3,6 +3,7 @@ import numpy as np
 # import matplotlib.pyplot as plt
 from PIL import Image
 import random
+import os
 
 # 验证码中的字符, 就不用汉字了
 from config import char_set
@@ -27,5 +28,22 @@ def gen_captcha_text_and_image():
     # image.write(captcha_text, captcha_text + '.jpg')  # 写到文件
 
     captcha_image = Image.open(captcha)
+    # print(captcha_image)
     captcha_image = np.array(captcha_image)
     return captcha_text, captcha_image
+
+
+def gen_image(image_path):
+    for image in os.listdir(image_path)[:1]:
+        captcha_text = image.strip('.png')
+        image = os.path.join(image_path, image)
+        # print(image)
+        captcha_image = Image.open(image)
+        # print(captcha_image, captcha_text)
+        captcha_image = np.array(captcha_image)
+        yield captcha_text, captcha_image
+
+
+
+# gen_image('./captcha_image')
+# gen_captcha_text_and_image()
