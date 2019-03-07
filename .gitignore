@@ -16,7 +16,7 @@ log
 test.py
 .idea
 test
-captcha_image
+captcha_image/*
 
 #tensoflow
 models/*

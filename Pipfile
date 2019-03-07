@@ -9,6 +9,7 @@ verify_ssl = true
 pillow = "*"
 captcha = "*"
 requests = "*"
+gevent = "*"
 
 [requires]
 python_version = "3.6"
