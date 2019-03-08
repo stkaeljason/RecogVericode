@@ -1,13 +1,12 @@
-from gevent import monkey
-monkey.patch_all()
-import gevent
 import requests
 
-from gevent.queue import Queue
-impack_queue = Queue()
+import asyncio
+from collections import namedtuple
+import aiohttp
 
+impack_queue = asyncio.Queue()
 
-def coll_im(cap_url,i):
+async def coll_im(cap_url,i):
 
     headers = {'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/webp,image/apng,image/*,*/*;q=0.8',
                # 'Accept-Encoding':'gzip, deflate, br',
@@ -21,25 +20,39 @@ def coll_im(cap_url,i):
                #          'Hm_lpvt_94d2fcdc25bf11213329895f51da83d0=1551841752'
                }
 
+    im_pack = namedtuple('impack', ['im_content', 'im_name'])
     try:
-        im_content = requests.get(cap_url, headers=headers).content
-        im_pack = (im_content, i)
-        impack_queue.put(im_pack)
+        async with aiohttp.ClientSession(headers=headers) as session:
+            async with session.get(cap_url) as res:
+                # content = await res.content
+                content =  await res.read()
+                print('coll',i)
+                im = im_pack(content,i)
+                impack_queue.put_nowait(im)
+                asyncio.sleep(0.15)
+                # print(len(impack_queue))
     except Exception as e:
         print(str(e))
 
 
-def save_im():
-    while not impack_queue.empty():
-        im_pack = impack_queue.get()
-        with open('./captcha_image5/'+str(im_pack[1])+'.png', 'wb') as f:
-            f.write(im_pack[0])
-            print('***write***', im_pack[1])
+async def save_im():
+    while True:
+        im = await impack_queue.get()
+        with open('./captcha_image/'+str(im.im_name)+'.png', 'wb') as f:
+            f.write(im.im_content)
+            print('***write***', im.im_name)
+
+def get_num(start, stop):
+    n = start
+    while n < stop:
+        n+=1
+        yield n
 
 
 if __name__ == "__main__":
-    # coll_im('https://login.sina.com.cn/cgi/pin.php?r=20613788&s=0&p=gz-051c329a8c11bbd250710d34a3e1d812638c')
+    weibo_url = 'https://login.sina.com.cn/cgi/pin.php?r=20613788&s=0&p=gz-051c329a8c11bbd250710d34a3e1d812638c'
+    tasks = [asyncio.ensure_future(coll_im(weibo_url, i)) for i in get_num(6000,16000)]
+    tasks.append(save_im())
 
-    a=[gevent.spawn(coll_im, 'https://login.sina.com.cn/cgi/pin.php?r=20613788&s=0&p=gz-051c329a8c11bbd250710d34a3e1d812638c',i) for i in range(6000,16000)]
-    gevent.joinall(a)
-    save_im()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(tasks))
