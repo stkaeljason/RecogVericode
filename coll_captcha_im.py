@@ -29,7 +29,7 @@ async def coll_im(cap_url,i):
                 print('coll',i)
                 im = im_pack(content,i)
                 impack_queue.put_nowait(im)
-                asyncio.sleep(0.05)
+                await asyncio.sleep(0.1)
                 # print(len(impack_queue))
     except Exception as e:
         print(str(e))
@@ -37,11 +37,11 @@ async def coll_im(cap_url,i):
 
 async def save_im(i):
     while True:
-        im = impack_queue.get()
+        im = await impack_queue.get()
         with open('./captcha_image5/'+str(im.im_name)+'.png', 'wb') as f:
             f.write(im.im_content)
             print('***write***', im.im_name)
-
+            # asyncio.sleep(0.)
 
 
 def get_num(start, stop):
@@ -54,7 +54,7 @@ def get_num(start, stop):
 if __name__ == "__main__":
     weibo_url = 'https://login.sina.com.cn/cgi/pin.php?r=20613788&s=0&p=gz-051c329a8c11bbd250710d34a3e1d812638c'
     tasks = [asyncio.ensure_future(coll_im(weibo_url, i)) for i in get_num(24000,30000)]
-    tasks.extend([save_im(i) for i in get_num(0,4)])
+    tasks.extend([save_im(i) for i in get_num(0,2)])
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(tasks))
