@@ -3,6 +3,7 @@ import requests
 import asyncio
 from collections import namedtuple
 import aiohttp
+import async_timeout
 
 impack_queue = asyncio.Queue()
 
@@ -35,13 +36,18 @@ async def coll_im(cap_url,i):
         print(str(e))
 
 
-async def save_im(i):
+async def get_im(i):
     while True:
         im = await impack_queue.get()
-        with open('./captcha_image5/'+str(im.im_name)+'.png', 'wb') as f:
+        with open('./captcha_image5/' + str(im.im_name) + '.png', 'wb') as f:
             f.write(im.im_content)
             print('***write***', im.im_name)
-            # asyncio.sleep(0.)
+
+# def save_callback(im):
+#     with open('./captcha_image5/' + str(im.im_name) + '.png', 'wb') as f:
+#         f.write(im.im_content)
+#         print('***write***', im.im_name)
+#         # asyncio.sleep(0.)
 
 
 def get_num(start, stop):
@@ -53,8 +59,8 @@ def get_num(start, stop):
 
 if __name__ == "__main__":
     weibo_url = 'https://login.sina.com.cn/cgi/pin.php?r=20613788&s=0&p=gz-051c329a8c11bbd250710d34a3e1d812638c'
-    tasks = [asyncio.ensure_future(coll_im(weibo_url, i)) for i in get_num(24000,30000)]
-    tasks.extend([save_im(i) for i in get_num(0,2)])
+    tasks = [asyncio.ensure_future(coll_im(weibo_url, i)) for i in get_num(30000, 35000)]
+    tasks.extend([asyncio.ensure_future(get_im(i)) for i in get_num(0,2)])
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(asyncio.wait(tasks))
