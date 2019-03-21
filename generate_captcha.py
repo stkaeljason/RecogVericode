@@ -40,9 +40,9 @@ def gen_image(image_path):
     for image in os.listdir(image_path):
 
         captcha_text = image.strip('.png')
-        image = os.path.join(image_path, image)
+        image_dir = os.path.join(image_path, image)
         # print(image)
-        captcha_image = Image.open(image)
+        captcha_image = Image.open(image_dir)
         captcha_image = captcha_image.resize((160, 60))
 
         # with open('./captcha_image/'+'x'+captcha_text+'.png', 'wb') as f:

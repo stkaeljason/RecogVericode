@@ -11,6 +11,7 @@ captcha = "*"
 requests = "*"
 gevent = "*"
 aiohttp = "*"
+opencv-python = "*"
 
 [requires]
 python_version = "3.6"

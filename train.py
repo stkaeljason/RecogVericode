@@ -9,7 +9,8 @@ print("验证码图像channel:", image.shape)  # (60, 160, 3)
 # 图像大小
 IMAGE_HEIGHT = 60
 IMAGE_WIDTH = 160
-MAX_CAPTCHA = len(text)
+# MAX_CAPTCHA = len(text)
+MAX_CAPTCHA = 5
 print("验证码文本最长字符数", MAX_CAPTCHA)  # 验证码最长4字符; 我全部固定为4,可以不固定. 如果验证码长度小于4，用'_'补齐
 
 
