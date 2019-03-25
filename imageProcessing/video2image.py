@@ -5,7 +5,7 @@ import os
 import time
 
 from multiprocessing import Pool
-import asyncio
+
 
 def video2image(videos_src, im_base_path):
     """从视频源路径将多个视频截帧保存图片,同步程序"""
