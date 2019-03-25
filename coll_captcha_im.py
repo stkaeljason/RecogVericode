@@ -2,6 +2,7 @@ import datetime
 import random
 import time
 import asyncio
+from queue import Queue
 from collections import namedtuple
 import aiohttp
 from threading import Thread
@@ -11,7 +12,7 @@ class CaptchaCrawl:
     im_sum_num = 1
 
     def __init__(self, site_url, headers, im_name, save_path):
-        self.queue = asyncio.Queue()
+        self.queue = Queue()
         self.site_url = site_url
         self.headers = headers
         self.im_name = im_name
@@ -31,18 +32,24 @@ class CaptchaCrawl:
             print(str(e))
 
     async def product(self, im_name):
+        print(im_name)
         im = await self.fetch(im_name)
-        self.queue.put_nowait(im)
+        self.queue.put(im)
+        print('threading2',self.queue.maxsize, self.queue.empty())
         print('product---->', im_name)
 
     async def save_im(self, im):
         with open(self.save_path + str(im.im_name) + '.png', 'wb') as f:
             f.write(im.im_content)
-            # print('***write***', im.im_name)
+            print('***write***', im.im_name)
 
     def save_callback(self,future):
         print('----callbackcallback----')
         self.im_sum_num+=1
+
+    def start_loop(self, loop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
 
 
 class Engine:
@@ -53,16 +60,10 @@ class Engine:
     def start_loop(self, loop):
         asyncio.set_event_loop(loop)
         loop.run_forever()
-        # while True:
-        #     im_name = compute_id(self.crawl.im_name)
-        #     # task = asyncio.ensure_future(self.crawl.product(im_name))
-        #     # task.add_done_callback(self.crawl.save_callback)
-        #     asyncio.run_coroutine_threadsafe(self.crawl.product(im_name), loop)
-        #     print('sdflsfsld')
 
     def start_product(self, loop):
         asyncio.set_event_loop(loop)
-        while True:
+        for _ in range(1000):
             im_name = compute_id(self.crawl.im_name)
             coroutine = self.crawl.product(im_name)
             task = asyncio.ensure_future(coroutine)
@@ -73,19 +74,23 @@ class Engine:
         new_loop = asyncio.new_event_loop()
         print('---start loop---')
         thread1 = Thread(target=self.start_loop, args=(new_loop,))
+        thread1.setDaemon(True)
+        thread1.start()
 
         print('---start product---')
         thread2 = Thread(target=self.start_product, args=(new_loop,))
-        thread1.setDaemon(True)
-        thread1.start()
+
         thread2.setDaemon(True)
         thread2.start()
 
         try:
+
             while True:
+                print('maintheadting********************')
                 if self.crawl.im_sum_num % 100 == 0:
                     print('success crawl captcha image---->%d'%self.crawl.im_sum_num)
                 im = self.crawl.queue.get()
+                # print(im)
                 if not im:
                     print('nononono')
                     time.sleep(1)
